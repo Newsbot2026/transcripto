@@ -1,6 +1,5 @@
-fastapi==0.95.2
-uvicorn==0.29.0
-python-dotenv==1.0.1
-youtube-transcript-api==0.6.2
-yt-dlp==2024.5.27
-pydantic==1.10.13
+fastapi
+uvicorn
+python-dotenv
+youtube-transcript-api
+yt-dlp
