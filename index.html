@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transcripto — Extract Transcripts from Any Video</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- ✅ REPLACE THIS with your Razorpay Key ID from razorpay.com/app/keys -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0a0a0f;--card:#13131a;--card2:#1a1a24;
+      --accent:#7c5cfc;--accent2:#a78bfa;
+      --border:#2a2a3a;--text:#f0eeff;--muted:#888;
+    }
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+    .app{max-width:720px;margin:0 auto;padding:3rem 1.5rem}
+
+    /* ─── HEADER ─── */
+    .header{text-align:center;margin-bottom:2.5rem}
+    .logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:1rem}
+    .logo-box{width:40px;height:40px;background:linear-gradient(135deg,#7c5cfc,#a78bfa);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .logo-name{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800}
+    .logo-name span{color:var(--accent2)}
+    h1{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.1;letter-spacing:-0.03em;margin-bottom:.5rem}
+    h1 em{font-style:normal;background:linear-gradient(90deg,#7c5cfc,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .sub{color:var(--muted);font-size:1rem}
+
+    /* ─── TRIAL BAR ─── */
+    .trial-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin:1.5rem 0}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.free{background:var(--accent)}
+    .dot.used{background:#ef4444}
+    .trial-txt{font-size:.8rem;color:var(--muted)}
+
+    /* ─── PLATFORM CHIPS ─── */
+    .platforms{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:2rem}
+    .chip{padding:5px 14px;border-radius:999px;border:1px solid var(--border);font-size:.78rem;color:var(--muted);background:var(--card)}
+    .chip.yt{border-color:#ff4d4d44;color:#ff7777}
+    .chip.ig{border-color:#e1306c44;color:#f06292}
+    .chip.x{border-color:#1d9bf044;color:#60b4ff}
+    .chip.fb{border-color:#1877f244;color:#5b9bff}
+    .chip.li{border-color:#0077b644;color:#4da3d5}
+
+    /* ─── INPUT ─── */
+    .input-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.25rem;margin-bottom:1rem;transition:border .2s}
+    .input-card:focus-within{border-color:var(--accent)}
+    .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+    .url-row{display:flex;gap:8px;align-items:center}
+    #urlInput{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;transition:border .2s}
+    #urlInput::placeholder{color:#444}
+    #urlInput:focus{border-color:var(--accent)}
+    #detected{display:none;font-size:.75rem;padding:4px 10px;border-radius:6px;background:var(--card2);border:1px solid var(--border);white-space:nowrap}
+
+    /* ─── BUTTON ─── */
+    .btn-main{width:100%;padding:.9rem;background:linear-gradient(135deg,#7c5cfc,#9f7afe);border:none;border-radius:12px;color:#fff;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:opacity .2s}
+    .btn-main:hover{opacity:.88}
+    .btn-main:disabled{opacity:.35;cursor:not-allowed}
+
+    /* ─── LOADING ─── */
+    #loadingBox{display:none;text-align:center;padding:2.5rem 1rem}
+    .spinner{width:34px;height:34px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto .75rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-msg{color:var(--muted);font-size:.9rem}
+    .step-info{font-size:.75rem;color:var(--accent2);margin-top:.3rem}
+
+    /* ─── RESULT ─── */
+    #resultBox{display:none;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-top:1rem}
+    .result-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+    .result-label{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--accent2)}
+    .actions{display:flex;gap:8px}
+    .btn-sm{padding:5px 12px;background:var(--card2);border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:.75rem;cursor:pointer;transition:all .15s}
+    .btn-sm:hover{border-color:var(--accent);color:var(--accent2)}
+    #transcriptText{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:1rem;font-size:.87rem;line-height:1.85;color:#ccc;max-height:300px;overflow-y:auto}
+    #transcriptText::-webkit-scrollbar{width:4px}
+    #transcriptText::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+    .meta{display:flex;gap:10px;margin-top:.75rem;flex-wrap:wrap}
+    .meta span{font-size:.73rem;color:var(--muted);background:var(--card2);padding:3px 9px;border-radius:6px;border:1px solid var(--border)}
+
+    /* ─── ERROR ─── */
+    #errorBox{display:none;background:#ef444412;border:1px solid #ef444435;border-radius:10px;padding:.9rem 1rem;color:#ff7777;font-size:.87rem;margin-top:.75rem}
+
+    /* ─── PAYWALL ─── */
+    #paywallBox{display:none;background:var(--card);border:1px solid #7c5cfc50;border-radius:16px;padding:2rem 1.5rem;text-align:center;margin-top:1.5rem}
+    #paywallBox h2{font-family:'Syne',sans-serif;font-size:1.4rem;margin-bottom:.4rem}
+    #paywallBox p{color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+    .plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem;text-align:left}
+    .plan{background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;transition:all .2s}
+    .plan:hover,.plan.active{border-color:var(--accent);transform:translateY(-2px)}
+    .plan-name{font-weight:500;font-size:.9rem;margin-bottom:.2rem}
+    .plan-price{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800}
+    .plan-price small{font-size:.8rem;font-weight:400;color:var(--muted)}
+    .plan-feats{margin-top:.6rem;font-size:.75rem;color:var(--muted);list-style:none;display:flex;flex-direction:column;gap:3px}
+    .plan-feats li::before{content:"✓ ";color:var(--accent2)}
+    .popular-tag{font-size:.68rem;color:var(--accent2);font-weight:500;margin-bottom:.2rem}
+    .btn-pay{width:100%;padding:.85rem;background:linear-gradient(135deg,#7c5cfc,#9f7afe);border:none;border-radius:10px;color:#fff;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer}
+    .demo-reset{color:var(--accent2);font-size:.75rem;cursor:pointer;display:block;margin-top:.8rem;text-decoration:underline}
+
+    @media(max-width:500px){h1{font-size:1.75rem}.plans{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="logo">
+      <div class="logo-box">📋</div>
+      <div class="logo-name">Transcri<span>pto</span></div>
+    </div>
+    <h1>Get transcripts from<br><em>any video</em>, instantly</h1>
+    <p class="sub">Paste a link from YouTube, Instagram, X, Facebook or LinkedIn</p>
+  </div>
+
+  <div class="trial-bar">
+    <div class="dot free" id="d1"></div>
+    <div class="dot free" id="d2"></div>
+    <span class="trial-txt" id="trialTxt">2 free extractions remaining</span>
+  </div>
+
+  <div class="platforms">
+    <div class="chip yt">▶ YouTube</div>
+    <div class="chip ig">◈ Instagram</div>
+    <div class="chip x">✕ X / Twitter</div>
+    <div class="chip fb">f Facebook</div>
+    <div class="chip li">in LinkedIn</div>
+  </div>
+
+  <div class="input-card">
+    <div class="label">Video URL</div>
+    <div class="url-row">
+      <input id="urlInput" type="text" placeholder="Paste any video link here..." />
+      <span id="detected"></span>
+    </div>
+  </div>
+
+  <button class="btn-main" id="extractBtn" onclick="handleExtract()">Extract Transcript →</button>
+
+  <div id="loadingBox">
+    <div class="spinner"></div>
+    <div class="loading-msg" id="loadMsg">Detecting platform...</div>
+    <div class="step-info" id="stepInfo"></div>
+  </div>
+
+  <div id="errorBox"></div>
+
+  <div id="resultBox">
+    <div class="result-head">
+      <div class="result-label" id="resultLabel">Transcript Ready</div>
+      <div class="actions">
+        <button class="btn-sm" onclick="copyText()">Copy</button>
+        <button class="btn-sm" onclick="downloadTxt()">Download .txt</button>
+      </div>
+    </div>
+    <div id="transcriptText"></div>
+    <div class="meta">
+      <span id="metaPlatform"></span>
+      <span id="metaWords"></span>
+      <span id="metaTime"></span>
+    </div>
+  </div>
+
+  <div id="paywallBox">
+    <h2>🔒 Free limit reached</h2>
+    <p>You've used both free extractions.<br>Subscribe to continue with unlimited access.</p>
+    <div class="plans">
+      <div class="plan" id="planBasic" onclick="selectPlan('basic')">
+        <div class="plan-name">Basic</div>
+        <div class="plan-price">₹199 <small>/month</small></div>
+        <ul class="plan-feats">
+          <li>50 extractions/month</li>
+          <li>YouTube + Instagram</li>
+          <li>TXT download</li>
+        </ul>
+      </div>
+      <div class="plan active" id="planPro" onclick="selectPlan('pro')">
+        <div class="popular-tag">★ Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">₹499 <small>/month</small></div>
+        <ul class="plan-feats">
+          <li>Unlimited extractions</li>
+          <li>All 5 platforms</li>
+          <li>TXT + SRT + JSON</li>
+          <li>API access</li>
+        </ul>
+      </div>
+    </div>
+    <button class="btn-pay" onclick="startPayment()">Subscribe Now with Razorpay →</button>
+    <a class="demo-reset" onclick="resetTrials()">↩ Reset demo trials</a>
+  </div>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────────
+  // ✅ CONFIG — Replace these values!
+  // ─────────────────────────────────────────────
+  const BACKEND_URL = "https://YOUR-BACKEND.railway.app";  // <- apna Railway URL yahan
+  const RAZORPAY_KEY = "rzp_test_XXXXXXXXXXXX";            // <- apni Razorpay Key yahan
+
+  const PLAN_PRICES = { basic: 19900, pro: 49900 }; // paisa in paise (₹199 = 19900)
+  // ─────────────────────────────────────────────
+
+  let trialsLeft = parseInt(localStorage.getItem("transcripto_trials") ?? "2");
+  let selectedPlan = "pro";
+  let currentTranscript = "";
+
+  const PLATFORMS = {
+    "youtube.com":   { name: "YouTube",    color: "#ff7777" },
+    "youtu.be":      { name: "YouTube",    color: "#ff7777" },
+    "instagram.com": { name: "Instagram",  color: "#f06292" },
+    "twitter.com":   { name: "X/Twitter",  color: "#60b4ff" },
+    "x.com":         { name: "X/Twitter",  color: "#60b4ff" },
+    "facebook.com":  { name: "Facebook",   color: "#5b9bff" },
+    "linkedin.com":  { name: "LinkedIn",   color: "#4da3d5" },
+  };
+
+  function getPlatform(url) {
+    try {
+      const host = new URL(url).hostname.replace("www.", "");
+      for (const key of Object.keys(PLATFORMS))
+        if (host.includes(key)) return { key, ...PLATFORMS[key] };
+    } catch (_) {}
+    return null;
+  }
+
+  document.getElementById("urlInput").addEventListener("input", function () {
+    const p = getPlatform(this.value.trim());
+    const el = document.getElementById("detected");
+    if (p) {
+      el.style.display = "block";
+      el.style.color = p.color;
+      el.style.borderColor = p.color + "44";
+      el.textContent = p.name;
+    } else { el.style.display = "none"; }
+  });
+
+  function updateTrialBar() {
+    document.getElementById("d1").className = "dot " + (trialsLeft < 2 ? "used" : "free");
+    document.getElementById("d2").className = "dot " + (trialsLeft < 1 ? "used" : "free");
+    document.getElementById("trialTxt").textContent =
+      trialsLeft > 0 ? `${trialsLeft} free extraction${trialsLeft > 1 ? "s" : ""} remaining`
+                     : "Free limit reached — upgrade to continue";
+    localStorage.setItem("transcripto_trials", trialsLeft);
+  }
+
+  function hideAll() {
+    ["loadingBox","resultBox","errorBox","paywallBox"].forEach(id =>
+      document.getElementById(id).style.display = "none"
+    );
+  }
+
+  function showError(msg) {
+    hideAll();
+    const el = document.getElementById("errorBox");
+    el.textContent = "⚠ " + msg;
+    el.style.display = "block";
+  }
+
+  async function handleExtract() {
+    const url = document.getElementById("urlInput").value.trim();
+    if (!url) { showError("Please paste a video URL first."); return; }
+    if (!url.startsWith("http")) { showError("URL should start with https://"); return; }
+
+    const platform = getPlatform(url);
+    if (!platform) { showError("Platform not recognized. Supported: YouTube, Instagram, X, Facebook, LinkedIn."); return; }
+
+    if (trialsLeft <= 0) {
+      document.getElementById("paywallBox").style.display = "block";
+      document.getElementById("paywallBox").scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    hideAll();
+    document.getElementById("loadingBox").style.display = "block";
+    document.getElementById("extractBtn").disabled = true;
+
+    const steps = [
+      "Detecting platform...",
+      "Connecting to backend...",
+      "Fetching video data...",
+      "Running transcript engine...",
+      "Formatting output...",
+    ];
+    for (let i = 0; i < steps.length; i++) {
+      document.getElementById("loadMsg").textContent = steps[i];
+      document.getElementById("stepInfo").textContent = `Step ${i + 1} of ${steps.length}`;
+      await sleep(700 + Math.random() * 300);
+    }
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/extract`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.error) throw new Error(data.error || "Extraction failed");
+
+      trialsLeft--;
+      updateTrialBar();
+      currentTranscript = data.transcript;
+
+      document.getElementById("loadingBox").style.display = "none";
+      document.getElementById("resultBox").style.display = "block";
+      document.getElementById("resultLabel").textContent = `${platform.name} — Transcript Ready`;
+      document.getElementById("transcriptText").textContent = data.transcript;
+      document.getElementById("metaPlatform").textContent = "📍 " + platform.name;
+      document.getElementById("metaWords").textContent = wordCount(data.transcript) + " words";
+      document.getElementById("metaTime").textContent = new Date().toLocaleTimeString();
+      document.getElementById("extractBtn").disabled = false;
+
+      if (trialsLeft <= 0) {
+        setTimeout(() => {
+          document.getElementById("paywallBox").style.display = "block";
+          document.getElementById("paywallBox").scrollIntoView({ behavior: "smooth" });
+        }, 1500);
+      }
+
+    } catch (err) {
+      document.getElementById("loadingBox").style.display = "none";
+      document.getElementById("extractBtn").disabled = false;
+      showError("Backend error: " + err.message + ". Make sure your backend is running.");
+    }
+  }
+
+  function wordCount(txt) {
+    return txt.replace(/\[.*?\]/g, "").trim().split(/\s+/).length;
+  }
+
+  function copyText() {
+    navigator.clipboard.writeText(currentTranscript).then(() => {
+      const btn = event.target;
+      btn.textContent = "Copied!";
+      setTimeout(() => btn.textContent = "Copy", 1500);
+    });
+  }
+
+  function downloadTxt() {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([currentTranscript], { type: "text/plain" }));
+    a.download = "transcript.txt";
+    a.click();
+  }
+
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    document.getElementById("planBasic").classList.toggle("active", plan === "basic");
+    document.getElementById("planPro").classList.toggle("active", plan === "pro");
+  }
+
+  function startPayment() {
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: PLAN_PRICES[selectedPlan],
+      currency: "INR",
+      name: "Transcripto",
+      description: selectedPlan === "pro" ? "Pro Plan — Unlimited" : "Basic Plan — 50/mo",
+      theme: { color: "#7c5cfc" },
+      handler: function (response) {
+        // ✅ Payment success → call backend to verify and activate subscription
+        fetch(`${BACKEND_URL}/payment/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_payment_id: response.razorpay_payment_id,
+            plan: selectedPlan,
+          }),
+        }).then(() => {
+          trialsLeft = 999; // unlimited after subscribe
+          updateTrialBar();
+          document.getElementById("paywallBox").style.display = "none";
+          alert("✅ Subscription activated! Enjoy unlimited extractions.");
+        });
+      },
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
+
+  function resetTrials() {
+    trialsLeft = 2;
+    updateTrialBar();
+    hideAll();
+    document.getElementById("urlInput").value = "";
+    document.getElementById("detected").style.display = "none";
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  updateTrialBar();
+</script>
+</body>
+</html>
