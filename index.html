@@ -25,8 +25,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <!-- ✅ REPLACE THIS with your Razorpay Key ID from razorpay.com/app/keys -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -207,7 +205,7 @@
         </ul>
       </div>
     </div>
-    <button class="btn-pay" onclick="startPayment()">Subscribe Now with Razorpay →</button>
+    <button class="btn-pay" onclick="startPayment()">Subscribe Now — ₹349/month →</button>
     <a class="demo-reset" onclick="resetTrials()">↩ Reset demo trials</a>
   </div>
 
@@ -373,32 +371,7 @@
   }
 
   function startPayment() {
-    const options = {
-      key: RAZORPAY_KEY,
-      amount: PLAN_PRICES[selectedPlan],
-      currency: "INR",
-      name: "Transcripto",
-      description: selectedPlan === "pro" ? "Pro Plan — Unlimited" : "Basic Plan — 50/mo",
-      theme: { color: "#7c5cfc" },
-      handler: function (response) {
-        // ✅ Payment success → call backend to verify and activate subscription
-        fetch(`${BACKEND_URL}/payment/verify`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            razorpay_payment_id: response.razorpay_payment_id,
-            plan: selectedPlan,
-          }),
-        }).then(() => {
-          trialsLeft = 999; // unlimited after subscribe
-          updateTrialBar();
-          document.getElementById("paywallBox").style.display = "none";
-          alert("✅ Subscription activated! Enjoy unlimited extractions.");
-        });
-      },
-    };
-    const rzp = new Razorpay(options);
-    rzp.open();
+    window.open('https://handri1.gumroad.com/l/transcripto-pro', '_blank');
   }
 
   function resetTrials() {
@@ -661,7 +634,7 @@
 
       <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.1rem 1.25rem">
         <div style="font-weight:500;font-size:.92rem;color:#a78bfa;margin-bottom:.4rem">What happens after my free trials are used?</div>
-        <div style="font-size:.84rem;color:#888;line-height:1.6">After 2 free extractions, you can subscribe to our Pro plan (₹349/month) for unlimited access. Payment is 100% secure via Razorpay.</div>
+        <div style="font-size:.84rem;color:#888;line-height:1.6">After 2 free extractions, you can subscribe to our Pro plan (₹349/month) for unlimited access. Payment is 100% secure via Gumroad.</div>
       </div>
 
     </div>
