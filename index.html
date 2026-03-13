@@ -104,6 +104,7 @@
   </style>
 </head>
 <body>
+<button id="themeBtn" onclick="toggleTheme()" style="position:fixed;top:1rem;right:1rem;z-index:999;background:#13131a;border:1px solid #2a2a3a;color:#a78bfa;border-radius:10px;padding:.45rem .85rem;font-size:.85rem;cursor:pointer">🌙 Dark</button>
 <div class="app">
 
   <div class="header">
@@ -394,5 +395,285 @@
 
   updateTrialBar();
 </script>
+
+<!-- ─── TRUST + FAQ SECTION ─── -->
+<div style="max-width:720px;margin:3rem auto 0;padding:0 1.5rem 4rem">
+
+  <!-- Animated Stats Bar -->
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;margin-bottom:3rem;padding:1.5rem;background:#13131a;border-radius:16px;border:1px solid #2a2a3a" id="statsBar">
+    <div style="text-align:center">
+      <div id="cnt1" style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#a78bfa">0</div>
+      <div style="font-size:.8rem;color:#888;margin-top:.2rem">Transcripts Generated</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#a78bfa">5 sec</div>
+      <div style="font-size:.8rem;color:#888;margin-top:.2rem">Average Extract Time</div>
+    </div>
+    <div style="text-align:center">
+      <div id="cnt2" style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#a78bfa">0%</div>
+      <div style="font-size:.8rem;color:#888;margin-top:.2rem">Free to Start</div>
+    </div>
+    <div style="text-align:center">
+      <div id="cnt3" style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#a78bfa">0+</div>
+      <div style="font-size:.8rem;color:#888;margin-top:.2rem">Languages Supported</div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    function animateCount(id, end, suffix, dur) {
+      const el = document.getElementById(id); if(!el) return;
+      let start=0, step=end/(dur/16);
+      const t=setInterval(()=>{start+=step;if(start>=end){el.textContent=Math.round(end).toLocaleString()+suffix;clearInterval(t);}else el.textContent=Math.floor(start).toLocaleString()+suffix;},16);
+    }
+    const obs=new IntersectionObserver((entries)=>{
+      if(entries[0].isIntersecting){
+        animateCount('cnt1',10000,'+',1800);
+        animateCount('cnt2',100,'%',1200);
+        animateCount('cnt3',50,'+',1000);
+        obs.disconnect();
+      }
+    });
+    const el=document.getElementById('statsBar');
+    if(el) obs.observe(el);
+  })();
+  </script>
+
+  <!-- How it works -->
+  <div style="margin-bottom:3rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:1.5rem;color:#f0eeff">How it works?</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem">
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.25rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.5rem">🔗</div>
+        <div style="font-weight:500;font-size:.9rem;margin-bottom:.3rem;color:#f0eeff">Step 1</div>
+        <div style="font-size:.8rem;color:#888">Copy any YouTube video URL</div>
+      </div>
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.25rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.5rem">📋</div>
+        <div style="font-weight:500;font-size:.9rem;margin-bottom:.3rem;color:#f0eeff">Step 2</div>
+        <div style="font-size:.8rem;color:#888">Paste the link in the box above</div>
+      </div>
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.25rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.5rem">⚡</div>
+        <div style="font-weight:500;font-size:.9rem;margin-bottom:.3rem;color:#f0eeff">Step 3</div>
+        <div style="font-size:.8rem;color:#888">Get the full transcript in seconds</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Use Cases -->
+  <div style="margin-bottom:3rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:1.5rem;color:#f0eeff">Who uses Transcripto?</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:.75rem">
+        <span style="font-size:1.2rem">✍️</span>
+        <div><div style="font-size:.88rem;font-weight:500;color:#f0eeff;margin-bottom:.2rem">Content Creators</div><div style="font-size:.78rem;color:#888">Repurpose video content into blogs, reels & posts</div></div>
+      </div>
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:.75rem">
+        <span style="font-size:1.2rem">🎓</span>
+        <div><div style="font-size:.88rem;font-weight:500;color:#f0eeff;margin-bottom:.2rem">Students</div><div style="font-size:.78rem;color:#888">Take notes from lectures and educational videos</div></div>
+      </div>
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:.75rem">
+        <span style="font-size:1.2rem">💼</span>
+        <div><div style="font-size:.88rem;font-weight:500;color:#f0eeff;margin-bottom:.2rem">Marketers</div><div style="font-size:.78rem;color:#888">Extract competitor video scripts quickly</div></div>
+      </div>
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:.75rem">
+        <span style="font-size:1.2rem">🤖</span>
+        <div><div style="font-size:.88rem;font-weight:500;color:#f0eeff;margin-bottom:.2rem">AI Users</div><div style="font-size:.78rem;color:#888">Feed transcripts to ChatGPT for summaries</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div style="margin-bottom:3rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:.5rem;color:#f0eeff">Simple Pricing</h2>
+    <p style="text-align:center;font-size:.85rem;color:#888;margin-bottom:1.5rem">No hidden charges. Cancel anytime.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem">
+
+      <!-- Free Plan -->
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:20px;padding:2rem">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;letter-spacing:.1em;color:#888;margin-bottom:1rem">FREE</div>
+        <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:#f0eeff;margin-bottom:.2rem">₹0</div>
+        <div style="font-size:.8rem;color:#555;margin-bottom:1.5rem">Try the basic features</div>
+        <div style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem">
+          <div style="font-size:.85rem;color:#aaa;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> 2 free extractions</div>
+          <div style="font-size:.85rem;color:#aaa;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> Copy & download .txt</div>
+          <div style="font-size:.85rem;color:#aaa;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> Timestamps included</div>
+          <div style="font-size:.85rem;color:#444;display:flex;align-items:center;gap:.6rem"><span style="font-size:1rem">✕</span> Unlimited access</div>
+          <div style="font-size:.85rem;color:#444;display:flex;align-items:center;gap:.6rem"><span style="font-size:1rem">✕</span> Priority support</div>
+        </div>
+        <div style="background:#1a1a24;border:1px solid #2a2a3a;border-radius:12px;padding:.75rem;text-align:center;font-size:.85rem;color:#555;font-weight:500">Current Plan</div>
+      </div>
+
+      <!-- Pro Plan — Kome style gradient -->
+      <div style="background:linear-gradient(135deg,#1e0a3c,#0d1f3c,#0a1a1a);border:1px solid #7c5cfc55;border-radius:20px;padding:2rem;position:relative;overflow:hidden">
+        <!-- Glow blob -->
+        <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,#7c5cfc44,transparent 70%);pointer-events:none"></div>
+        <div style="position:absolute;bottom:-40px;left:-20px;width:120px;height:120px;background:radial-gradient(circle,#06b6d433,transparent 70%);pointer-events:none"></div>
+
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;letter-spacing:.1em;color:#a78bfa;margin-bottom:1rem">PRO</div>
+        <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:#fff;margin-bottom:.2rem">₹349 <span style="font-size:1rem;font-weight:400;color:#888">/ month</span></div>
+        <div style="font-size:.8rem;color:#666;margin-bottom:1.5rem">~$4/mo • No commitment</div>
+        <div style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem">
+          <div style="font-size:.85rem;color:#ddd;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> Unlimited extractions</div>
+          <div style="font-size:.85rem;color:#ddd;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> Copy & download .txt</div>
+          <div style="font-size:.85rem;color:#ddd;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> Timestamps included</div>
+          <div style="font-size:.85rem;color:#ddd;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> All languages supported</div>
+          <div style="font-size:.85rem;color:#ddd;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> Priority support</div>
+          <div style="font-size:.85rem;color:#ddd;display:flex;align-items:center;gap:.6rem"><span style="color:#a78bfa;font-size:1rem">✓</span> Early access to new features</div>
+        </div>
+        <button onclick="startPayment('pro')" style="width:100%;background:linear-gradient(90deg,#7c5cfc,#a78bfa);color:#fff;border:none;border-radius:12px;padding:.85rem;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.02em">Get Pro →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <div style="margin-bottom:3rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:1.5rem;color:#f0eeff">What people are saying</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:16px;padding:1.25rem">
+        <div style="color:#f59e0b;font-size:.85rem;margin-bottom:.75rem">★★★★★</div>
+        <div style="font-size:.85rem;color:#ccc;line-height:1.6;margin-bottom:.85rem">"Saved me hours of manual note-taking. I use this every day for my YouTube research!"</div>
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c5cfc,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff">R</div>
+          <div><div style="font-size:.82rem;font-weight:500;color:#f0eeff">Rahul M.</div><div style="font-size:.75rem;color:#555">Content Creator</div></div>
+        </div>
+      </div>
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:16px;padding:1.25rem">
+        <div style="color:#f59e0b;font-size:.85rem;margin-bottom:.75rem">★★★★★</div>
+        <div style="font-size:.85rem;color:#ccc;line-height:1.6;margin-bottom:.85rem">"Finally a tool that works perfectly for Hindi videos too. Transcripts are super accurate!"</div>
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff">P</div>
+          <div><div style="font-size:.82rem;font-weight:500;color:#f0eeff">Priya S.</div><div style="font-size:.75rem;color:#555">Student, Delhi</div></div>
+        </div>
+      </div>
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:16px;padding:1.25rem">
+        <div style="color:#f59e0b;font-size:.85rem;margin-bottom:.75rem">★★★★☆</div>
+        <div style="font-size:.85rem;color:#ccc;line-height:1.6;margin-bottom:.85rem">"I paste transcripts into ChatGPT to summarize long videos. This tool is a game changer!"</div>
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff">A</div>
+          <div><div style="font-size:.82rem;font-weight:500;color:#f0eeff">Aman K.</div><div style="font-size:.75rem;color:#555">Digital Marketer</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div style="margin-bottom:3rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:1.5rem;color:#f0eeff">Transcripto vs Others</h2>
+    <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:16px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead>
+          <tr style="background:#1a1a24">
+            <th style="padding:.85rem 1rem;text-align:left;color:#888;font-weight:500">Feature</th>
+            <th style="padding:.85rem 1rem;text-align:center;color:#a78bfa;font-weight:700">Transcripto</th>
+            <th style="padding:.85rem 1rem;text-align:center;color:#666;font-weight:500">Others</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid #2a2a3a">
+            <td style="padding:.8rem 1rem;color:#ccc">Free trials without signup</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#a78bfa">✓</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#555">✕</td>
+          </tr>
+          <tr style="border-top:1px solid #2a2a3a;background:#0f0f16">
+            <td style="padding:.8rem 1rem;color:#ccc">Hindi video support</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#a78bfa">✓</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#555">Partial</td>
+          </tr>
+          <tr style="border-top:1px solid #2a2a3a">
+            <td style="padding:.8rem 1rem;color:#ccc">Download as .txt</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#a78bfa">✓</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#a78bfa">✓</td>
+          </tr>
+          <tr style="border-top:1px solid #2a2a3a;background:#0f0f16">
+            <td style="padding:.8rem 1rem;color:#ccc">Timestamps with transcript</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#a78bfa">✓</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#555">Partial</td>
+          </tr>
+          <tr style="border-top:1px solid #2a2a3a">
+            <td style="padding:.8rem 1rem;color:#ccc">India pricing (₹)</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#a78bfa">✓</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#555">✕ ($$$)</td>
+          </tr>
+          <tr style="border-top:1px solid #2a2a3a;background:#0f0f16">
+            <td style="padding:.8rem 1rem;color:#ccc">No ads</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#a78bfa">✓</td>
+            <td style="padding:.8rem 1rem;text-align:center;color:#555">✕</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div style="margin-bottom:2rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:1.5rem;color:#f0eeff">Frequently Asked Questions</h2>
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.1rem 1.25rem">
+        <div style="font-weight:500;font-size:.92rem;color:#a78bfa;margin-bottom:.4rem">Is Transcripto free to use?</div>
+        <div style="font-size:.84rem;color:#888;line-height:1.6">Yes! You get 2 free transcript extractions without signing up. After that, upgrade to our Basic or Pro plan for unlimited access.</div>
+      </div>
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.1rem 1.25rem">
+        <div style="font-weight:500;font-size:.92rem;color:#a78bfa;margin-bottom:.4rem">Which videos are supported?</div>
+        <div style="font-size:.84rem;color:#888;line-height:1.6">All public YouTube videos that have captions or auto-generated subtitles are supported. This includes Hindi, English and most major languages.</div>
+      </div>
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.1rem 1.25rem">
+        <div style="font-weight:500;font-size:.92rem;color:#a78bfa;margin-bottom:.4rem">Do I need to create an account?</div>
+        <div style="font-size:.84rem;color:#888;line-height:1.6">No account needed for free trials! Just paste the link and get your transcript instantly. Account is only needed for paid plans.</div>
+      </div>
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.1rem 1.25rem">
+        <div style="font-weight:500;font-size:.92rem;color:#a78bfa;margin-bottom:.4rem">How accurate are the transcripts?</div>
+        <div style="font-size:.84rem;color:#888;line-height:1.6">We use YouTube's own captions data — same source that powers YouTube's CC feature. Accuracy depends on the video's original captions quality.</div>
+      </div>
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.1rem 1.25rem">
+        <div style="font-weight:500;font-size:.92rem;color:#a78bfa;margin-bottom:.4rem">Can I download the transcript?</div>
+        <div style="font-size:.84rem;color:#888;line-height:1.6">Yes! Every transcript can be downloaded as a .txt file or copied to clipboard with one click — completely free.</div>
+      </div>
+
+      <div style="background:#13131a;border:1px solid #2a2a3a;border-radius:12px;padding:1.1rem 1.25rem">
+        <div style="font-weight:500;font-size:.92rem;color:#a78bfa;margin-bottom:.4rem">What happens after my free trials are used?</div>
+        <div style="font-size:.84rem;color:#888;line-height:1.6">After 2 free extractions, you can subscribe to our Pro plan (₹349/month) for unlimited access. Payment is 100% secure via Razorpay.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding-top:2rem;border-top:1px solid #2a2a3a">
+    <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#a78bfa;margin-bottom:.4rem">Transcripto</div>
+    <div style="font-size:.78rem;color:#555">Extract YouTube transcripts instantly • Made in India 🇮🇳</div>
+  </div>
+
+</div>
+
+<script>
+function toggleTheme() {
+  const btn = document.getElementById('themeBtn');
+  const isLight = document.body.classList.toggle('light-mode');
+  btn.textContent = isLight ? '🌞 Light' : '🌙 Dark';
+}
+</script>
+<style>
+body.light-mode {
+  background: #f5f5ff !important;
+  color: #1a1a2e !important;
+}
+body.light-mode .app, body.light-mode [style*="background:#13131a"], body.light-mode [style*="background:#0a0a0f"] {
+  filter: invert(0);
+}
+body.light-mode .input-card { background: #fff !important; border-color: #ddd !important; }
+body.light-mode .btn-main { background: linear-gradient(90deg,#7c5cfc,#a78bfa) !important; }
+</style>
 </body>
 </html>
