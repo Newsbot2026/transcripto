@@ -33,11 +33,11 @@ async def extract(request: Request):
         video_id = get_youtube_id(url)
         if not video_id:
             return JSONResponse({"error": "Invalid YouTube URL"}, status_code=400)
-        data = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "hi", "auto"])
+        fetched = YouTubeTranscriptApi().fetch(video_id)
         lines = []
-        for e in data:
-            s = int(e["start"])
-            lines.append(f"[{s//60:02d}:{s%60:02d}] {e['text']}")
+        for snippet in fetched:
+            s = int(snippet.start)
+            lines.append(f"[{s//60:02d}:{s%60:02d}] {snippet.text}")
         return {"success": True, "transcript": "\n".join(lines)}
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
