@@ -1,10 +1,10 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 from youtube_transcript_api import YouTubeTranscriptApi
 import re
 
-app = FastAPI(title="Transcripto API")
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -13,67 +13,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class ExtractRequest(BaseModel):
-    url: str
-
-class PaymentRequest(BaseModel):
-    razorpay_payment_id: str
-    plan: str
-
-def detect_platform(url: str) -> str:
-    url = url.lower()
-    if "youtube.com" in url or "youtu.be" in url:
-        return "youtube"
-    elif "instagram.com" in url:
-        return "instagram"
-    elif "twitter.com" in url or "x.com" in url:
-        return "x"
-    elif "facebook.com" in url:
-        return "facebook"
-    elif "linkedin.com" in url:
-        return "linkedin"
-    return "unknown"
-
-def get_youtube_id(url: str) -> str:
+def get_youtube_id(url):
     patterns = [
         r"youtube\.com/watch\?v=([a-zA-Z0-9_-]{11})",
         r"youtu\.be/([a-zA-Z0-9_-]{11})",
         r"youtube\.com/shorts/([a-zA-Z0-9_-]{11})",
     ]
-    for pattern in patterns:
-        match = re.search(pattern, url)
-        if match:
-            return match.group(1)
+    for p in patterns:
+        m = re.search(p, url)
+        if m:
+            return m.group(1)
     return None
 
 @app.post("/extract")
-async def extract_transcript(req: ExtractRequest):
-    url = req.url.strip()
-    platform = detect_platform(url)
-    if platform == "unknown":
-        raise HTTPException(status_code=400, detail="Unsupported platform URL")
-    if platform != "youtube":
-        raise HTTPException(status_code=400, detail="Currently only YouTube is supported on free tier")
+async def extract(request: Request):
     try:
+        body = await request.json()
+        url = body.get("url", "").strip()
         video_id = get_youtube_id(url)
         if not video_id:
-            raise Exception("Could not extract YouTube video ID")
-        transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "hi", "auto"])
+            return JSONResponse({"error": "Invalid YouTube URL"}, status_code=400)
+        data = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "hi", "auto"])
         lines = []
-        for entry in transcript_list:
-            start = int(entry["start"])
-            mins = start // 60
-            secs = start % 60
-            lines.append(f"[{mins:02d}:{secs:02d}] {entry['text']}")
-        transcript = "\n".join(lines)
-        return {"success": True, "platform": platform, "transcript": transcript, "word_count": len(transcript.split())}
+        for e in data:
+            s = int(e["start"])
+            lines.append(f"[{s//60:02d}:{s%60:02d}] {e['text']}")
+        return {"success": True, "transcript": "\n".join(lines)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.post("/payment/verify")
-async def verify_payment(req: PaymentRequest):
-    return {"success": True, "message": "Subscription activated", "plan": req.plan}
+async def payment(request: Request):
+    return {"success": True}
 
 @app.get("/")
 async def health():
-    return {"status": "Transcripto backend is running!"}
+    return {"status": "running"}
